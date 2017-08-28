@@ -1,0 +1,120 @@
+/*
+TODO:
+1. Add media queries for different sizes
+*/
+
+*{
+	font-family: Arial;
+	margin: 0
+}
+
+.column {
+	height: 100vh;
+}
+
+.column.task {
+	width: calc(40% - 1px);
+	float: right;
+	/*border-left: solid 1px black;*/
+	background-color: rgb(250, 250, 250);
+	border-left: solid 1px rgba(0,0,0,0.12);
+}
+
+.column.schedule {
+	width: 60%;
+	height: 100vh;
+	overflow-y: scroll;
+	float: left;
+	background-color: rgba(0,0,0,0.12);
+	-webkit-background-clip: text;
+	/*-webkit-text-fill-color: transparent;*/
+	transition: background-color .1s;
+}
+.column.schedule.hide-scrollbar {
+	background-color: transparent;
+	transition: background-color .6s;
+}
+
+.column.schedule::-webkit-scrollbar {
+    width: 10px; 
+    background-color: transparent; 
+}
+
+
+.column.schedule::-webkit-scrollbar-thumb {
+	border-radius: 10px 0 0 10px;
+	/*border-radius: 0 10px 0 10px;*/
+    background-color: inherit;
+}
+
+
+#scheduleTimeline ul{
+	display: block;
+	position: relative;
+	width: 100px;
+	float: left;
+	list-style: none;
+	padding: 0;
+}
+
+#scheduleTimeline ul li {
+	color: #999;
+	text-align: center;
+	height: 60px;
+}
+
+#scheduleTimeline ul li:before {
+	display: block;
+	content: '';
+    position: relative;
+    top: 10px;
+    left: 100%;
+    width: calc(60vw - 120px);
+    height: 1px;
+    background: rgba(0,0,0,0.12);
+}
+
+#scheduleList {
+	display: block;
+	padding: 0;
+	list-style: none;
+	width: calc(100% - 100px);
+	height: calc(50px * 24);
+	float: left;
+	background: #fff;
+}
+
+#title {
+	margin-left: 20px;
+	margin-top: 20px;
+}
+
+#itemsList {
+	display: block;
+	list-style: none;
+	padding: 0;
+	margin-top: 20px;
+	width: 100%;
+}
+
+.item {
+	display: block;
+	margin-left: 20px;
+	margin-right: 20px;
+	margin-bottom: 10px;
+	padding: 10px 10px 10px 10px;
+	/*cursor: pointer;*/
+	height: 50px;
+	background: #abc;
+}
+
+.itemTitle {
+	font-style: bold;
+}
+
+#scheduleList .item {
+	position: relative;
+	margin: 0px;
+	vertical-align: middle;
+	padding: 0px 10px;
+}
