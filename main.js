@@ -9,8 +9,7 @@ const store = new Store({
 });
 let win;
 
-
-require('electron-reload')(__dirname);
+// require('electron-reload')(__dirname);
 
 app.on('ready', () => {
 	let { width, height } = store.get('windowBounds');

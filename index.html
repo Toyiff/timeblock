@@ -8,14 +8,16 @@
 	<link rel="stylesheet" href="./css/index.css">
 </head>
 <body>
-	<div class="column schedule">
-		<div id = "scheduleTimeline"></div>
-		<ul id = "scheduleList">
-		</ul>
-	</div>
-	<div class="column task">
-		<h1 id = "title">TASKS</h1>
-		<ul id = "itemsList"></ul>
+	<div id="wrapper">
+		<div class = "column schedule">
+			<div id = "scheduleTimeline"></div>
+			<ul id = "scheduleList">
+			</ul>
+		</div>
+		<div class = "column tasks">
+			<h1 class = "noselect" id = "title">TASKS</h1>
+			<ul id = "itemsList"></ul>
+		</div>
 	</div>
 	<script>
 		window.$ = window.jQuery = require('./js/jquery-3.2.1.min.js');

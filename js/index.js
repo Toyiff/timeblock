@@ -1,7 +1,11 @@
 // TODO
-// 1. When dropped, save the new time to file
+// 1. Add over event
+// 1. When dropped
+// 		1. move the element to new parent
+// 		2. save the new time to file
 // 2. Destroy the origional block
 // 3. Add new block at correct position
+// Minor: Make the TASKS title editable
 
 const Store = require('electron-store');
 const dataConfig = new Store({
@@ -28,7 +32,7 @@ var itemsLength = items.length;
 for (i = 0; i < itemsLength; i++) {
 	if (items[i].start > -1) {
 		$('#scheduleList').append(
-			$('<li></li>').addClass('item')
+			$('<li></li>').addClass('item task')
 			.attr("itemid", i)
 			.css({
 				top: items[i].start + 10,
@@ -36,11 +40,11 @@ for (i = 0; i < itemsLength; i++) {
 				lineHeight: items[i].duration +'px'
 			})
 			.draggable({
-				containment: 'parent',
+				containment: 'document',
 				cursor: 'move',
+				helper: 'clone',
 				start: handleDragStart,
-				stop: handleDragStop,
-				revert: "invalid"
+				stop: handleDragStop
 			})
 			.append(
 				$('<p></p>').addClass('itemTitle').html(items[i].name)
@@ -53,9 +57,9 @@ for (i = 0; i < itemsLength; i++) {
 			.draggable({
 				containment: 'document',
 				cursor: 'move',
+				helper: 'clone',
 				start: handleDragStart,
-				stop: handleDragStop,
-				revert: "invalid"
+				stop: handleDragStop
 			})
 			.append(
 				$('<p></p>').addClass('itemTitle').html(items[i].name)
@@ -64,7 +68,7 @@ for (i = 0; i < itemsLength; i++) {
 	}
 }
 
-// Setup the schedule timeline
+// TIMELINE
 $('#scheduleTimeline').append('<ul></ul>');
 for (i = 0; i < 24; i++) {
 	var time;
@@ -74,6 +78,9 @@ for (i = 0; i < 24; i++) {
 	$('#scheduleTimeline ul').append('<li><span>'+time+'</span></li>')
 }
 
+$('#scheduleList').height($('.column.schedule').prop('scrollHeight'));
+
+// SCROLLING
 var timelineScrollHeight = 
 	$('.column.schedule').prop('scrollHeight') - $(document).height();
 // Setup the schedule scroll percentage
@@ -94,21 +101,100 @@ $('.column.schedule').scroll(function() {
 
 $('#scheduleList').droppable({
 	accept: '.item',
-	drop: handleDropEvent
+	drop: scheduleDropEvent,
+	over: scheduleOverEvent
+})
 
+$('.column.tasks').droppable({
+	accept: '.task',
+	drop: listDropEvent,
+	over: listOverEvent
 })
 
 function handleDragStart( event, ui ) {
-  // $(ui.helper).width($(event.target).width());
+	var draggable = $(event.target); 
+	var i = draggable.attr('itemid');
+	draggable.css({
+		opacity: '0.5'
+	});
+	lh = Math.min(30, items[i].duration);
+	$(ui.helper)
+	.width(draggable.width())
+	.css({
+		padding: '0px 10px',
+		height: items[i].duration,
+		lineHeight: lh+'px'
+	});
 }
 
 function handleDragStop( event, ui ) {
-  // var offsetXPos = parseInt( ui.offset.left );
-  // var offsetYPos = parseInt( ui.offset.top );
-  // alert( "Drag stopped!\n\nOffset: (" + offsetXPos + ", " + offsetYPos + ")\n");
+	var draggable = $(event.target); 
+	draggable.css({
+		opacity: '1'
+	});
 }
 
-function handleDropEvent( event, ui ) {
-  var draggable = ui.draggable;
-  alert( 'The square with ID "' + draggable.attr('itemid') + '" was dropped onto me!' );
+function scheduleDropEvent( event, ui ) {
+	var draggable = ui.draggable;
+	var i = draggable.attr('itemid');
+	items[i].start = $('.column.schedule').scrollTop() + ui.offset.top - 10;
+	draggable
+	.css({
+		opacity: '1',
+		padding: '0px 10px',
+		top: items[i].start + 10,
+		height: items[i].duration,
+		lineHeight: items[i].duration +'px'
+	})
+	.addClass('task');
+
+	
+
+	console.log(items[i].start);
+
+	$(this)
+	.append(draggable);
+	
 }
+
+function scheduleOverEvent( event, ui ) {
+	var draggable = ui.draggable; 
+	var i = draggable.attr('itemid');
+	var h = draggable.height();
+	// $(ui.helper)
+}
+
+function listDropEvent( event, ui ) {
+	var draggable = ui.draggable;
+	$('#itemsList').append(draggable);
+	draggable
+	.css({
+		height: '50px',
+		padding: '10px 10px',
+		lineHeight: '10px'
+	})
+	.removeClass('task')
+	.animate({
+		left: 0,
+		top: 0
+	});;
+}
+
+function listOverEvent( event, ui ) {
+	var draggable = ui.draggable;
+	console.log( 'The square with ID "' + draggable.attr('itemid') + '" is over me!' ) 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
