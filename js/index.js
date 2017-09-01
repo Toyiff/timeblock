@@ -42,9 +42,11 @@ for (i = 0; i < itemsLength; i++) {
 			.draggable({
 				containment: 'document',
 				cursor: 'move',
+				grid: [1, 5],
 				helper: 'clone',
 				start: handleDragStart,
-				stop: handleDragStop
+				stop: handleDragStop,
+				cursorAt: {left : 10, top: 10}
 			})
 			.append(
 				$('<p></p>').addClass('itemTitle').html(items[i].name)
@@ -59,7 +61,8 @@ for (i = 0; i < itemsLength; i++) {
 				cursor: 'move',
 				helper: 'clone',
 				start: handleDragStart,
-				stop: handleDragStop
+				stop: handleDragStop,
+				cursorAt: {left : 10, top: 10}
 			})
 			.append(
 				$('<p></p>').addClass('itemTitle').html(items[i].name)
@@ -161,6 +164,8 @@ function scheduleOverEvent( event, ui ) {
 	var draggable = ui.draggable; 
 	var i = draggable.attr('itemid');
 	var h = draggable.height();
+
+	draggable.draggable( "option", "grid", [ 1, 5 ] );
 	// $(ui.helper)
 }
 
