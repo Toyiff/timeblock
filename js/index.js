@@ -69,6 +69,14 @@ for (i = 0; i < itemsLength; i++) {
 }
 
 // TIMELINE
+$('#scheduleTimeline').append('<ul></ul>');
+for (i = 0; i < 24; i++) {
+	var time;
+	if (i == 12) {time = "Noon"} else 
+		if (i > 12) {time = i - 12 + ':00 pm'} else
+			{time = i + ':00 am'}
+	$('#scheduleTimeline ul').append('<li><span>'+time+'</span></li>')
+}
 
 $('#scheduleList').height($('.column.schedule').prop('scrollHeight'));
 
