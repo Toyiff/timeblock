@@ -13,13 +13,13 @@ const dataConfig = new Store({
 		scrollPercent: 0
 	}
 });
-console.log(dataConfig.get('scrollPercent'))
+// console.log(dataConfig.get('scrollPercent'))
 const dataUser = new Store({
 	name: "user_data",
 	defaults: {
 	    items: [
-	    	{name: 'Math HW', duration: 10, start: -1},
-	    	{name: 'English HW', duration: 10, start: -1},
+	    	{name: 'Math HW', duration: 60, start: -1},
+	    	{name: 'English HW', duration: 30, start: -1},
 	    	{name: 'Chinese', duration: 30, start: 780}
 	    ]
 	}
@@ -30,55 +30,55 @@ var itemsLength = items.length;
 
 
 for (i = 0; i < itemsLength; i++) {
+	insertItem(i);
+}
+
+function insertItem(i) {
+	var item = $('<li></li>')
+	.attr("itemid", i)
+	.addClass('item')
+	.css({
+		height: items[i].duration,
+		lineHeight: items[i].duration +'px'
+	})
+	.draggable({
+		containment: 'document',
+		cursor: 'move',
+		helper: 'clone',
+		start: handleDragStart,
+		stop: handleDragStop,
+		drag: handleDragDragging,
+	})
+	.append(
+		$('<p></p>').addClass('itemTitle').html(items[i].name)
+	);
+
 	if (items[i].start > -1) {
-		$('#scheduleList').append(
-			$('<li></li>').addClass('item task')
-			.attr("itemid", i)
-			.css({
-				top: items[i].start + 10,
-				height: items[i].duration,
-				lineHeight: items[i].duration +'px'
-			})
-			.draggable({
-				containment: 'document',
-				cursor: 'move',
-				helper: 'clone',
-				start: handleDragStart,
-				stop: handleDragStop
-			})
-			.append(
-				$('<p></p>').addClass('itemTitle').html(items[i].name)
-			)
-		)
+
+		item
+		.addClass('task')
+		.css({
+			top: items[i].start + 10,
+			zIndex: items[i].start + 10
+		})
+
+		$('#scheduleList').append( item );
 	} else {
-		$('#itemsList').append(
-			$("<li></li>").addClass('item')
-			.attr("itemid", i)
-			.draggable({
-				containment: 'document',
-				cursor: 'move',
-				helper: 'clone',
-				start: handleDragStart,
-				stop: handleDragStop
-			})
-			.append(
-				$('<p></p>').addClass('itemTitle').html(items[i].name)
-			) 
-		)
+		$('#itemsList').append( item );
 	}
 }
 
 // TIMELINE
-$('#scheduleTimeline').append('<ul></ul>');
-for (i = 0; i < 24; i++) {
-	var time;
-	if (i == 12) {time = "Noon"} else 
-		if (i > 12) {time = i - 12 + ':00 pm'} else
-			{time = i + ':00 am'}
-	$('#scheduleTimeline ul').append('<li><span>'+time+'</span></li>')
-}
+// $('#scheduleTimeline').append('<ul></ul>');
+// for (i = 0; i < 24; i++) {
+// 	var time;
+// 	if (i == 12) {time = "Noon"} else 
+// 		if (i > 12) {time = i - 12 + ':00 pm'} else
+// 			{time = i + ':00 am'}
+// 	$('#scheduleTimeline ul').append('<li><span>'+time+'</span></li>')
+// }
 
-$('#scheduleList').height($('.column.schedule').prop('scrollHeight'));
+// $('#scheduleList').height($('.column.schedule').prop('scrollHeight'));
 
 // SCROLLING
 var timelineScrollHeight = 
@@ -111,6 +111,14 @@ $('.column.tasks').droppable({
 	over: listOverEvent
 })
 
+function handleDragDragging ( event, ui ) {
+	var draggable = $(event.target); 
+	var i = draggable.attr('itemid');
+	$(ui.helper).css({
+		zIndex: $('.column.schedule').scrollTop() + ui.offset.top
+	});
+}
+
 function handleDragStart( event, ui ) {
 	var draggable = $(event.target); 
 	var i = draggable.attr('itemid');
@@ -120,11 +128,11 @@ function handleDragStart( event, ui ) {
 	lh = Math.min(30, items[i].duration);
 	$(ui.helper)
 	.width(draggable.width())
-	.css({
-		padding: '0px 10px',
-		height: items[i].duration,
-		lineHeight: lh+'px'
-	});
+	// .css({
+	// 	padding: '0px 10px',
+	// 	height: items[i].duration,
+	// 	lineHeight: lh+'px'
+	// });
 }
 
 function handleDragStop( event, ui ) {
@@ -144,13 +152,10 @@ function scheduleDropEvent( event, ui ) {
 		padding: '0px 10px',
 		top: items[i].start + 10,
 		height: items[i].duration,
-		lineHeight: items[i].duration +'px'
+		lineHeight: items[i].duration +'px',
+		zIndex: items[i].start + 10
 	})
 	.addClass('task');
-
-	
-
-	console.log(items[i].start);
 
 	$(this)
 	.append(draggable);
@@ -168,13 +173,8 @@ function listDropEvent( event, ui ) {
 	var draggable = ui.draggable;
 	$('#itemsList').append(draggable);
 	draggable
-	.css({
-		height: '50px',
-		padding: '10px 10px',
-		lineHeight: '10px'
-	})
 	.removeClass('task')
-	.animate({
+	.css({
 		left: 0,
 		top: 0
 	});;
@@ -182,8 +182,61 @@ function listDropEvent( event, ui ) {
 
 function listOverEvent( event, ui ) {
 	var draggable = ui.draggable;
-	console.log( 'The square with ID "' + draggable.attr('itemid') + '" is over me!' ) 
+	// console.log( 'The square with ID "' + draggable.attr('itemid') + '" is over me!' ) 
 }
+
+// DIALOGS
+
+var dialog, form;
+	// name = $( "#inputName" ),
+	// length = $( "#inputLength" ),
+ 	// desciption = $( "#inputDescription" );
+    // allFields = $( [] ).add( name ).add( length ).add( desciption );
+    $( "#inputLength" ).val(30);
+
+dialog = $('#dialogAddItem').dialog({
+	autoOpen: false,
+	modal: true,
+	width: 300,
+	height: 500,
+	close: function() {
+		$( "#inputName" ).val("").removeClass('dialogInputError');
+		$( "#inputLength" ).val(30).removeClass('dialogInputError');
+		$( "#inputDescription" ).val("").removeClass('dialogInputError');
+		// form[ 0 ].reset();
+		// allFields.removeClass( "ui-state-error" );
+	}
+})
+
+function dialogClose() {
+	dialog.dialog("close");
+}
+
+function toAddItem() {
+	$('#dialogAddItem').dialog("open");
+}
+
+function toDeleteItem() {
+
+}
+
+function addItem() {
+
+	var name = $( "#inputName" ).val();
+	var length = $( "#inputLength" ).val();
+	var description = $( "#inputDescription" ).val();
+
+	if ((name != "") && !name.indexOf(' ')==0 ) {
+		items.push({name: name, duration: length, start: -1});
+		
+		insertItem(items.length - 1);
+		console.log(items);
+		dialogClose();
+	} else {
+		$( "#inputName" ).addClass('dialogInputError');
+	}
+}
+
 
 
 
