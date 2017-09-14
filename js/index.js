@@ -48,6 +48,7 @@ function insertItem(i) {
 		start: handleDragStart,
 		stop: handleDragStop,
 		drag: handleDragDragging,
+		snap: '.snapguide'
 	})
 	.append(
 		$('<p></p>').addClass('itemTitle').html(items[i].name)
@@ -66,6 +67,16 @@ function insertItem(i) {
 	} else {
 		$('#itemsList').append( item );
 	}
+}
+
+var guideGap = 10;
+
+for (i=0; i<(24*60/guideGap); i++) {
+	$('#scheduleGuide')
+	.append($('<li class="snapguide"></li>')
+		.css({
+			top: i*guideGap
+		}));
 }
 
 // TIMELINE
@@ -131,7 +142,7 @@ function handleDragStart( event, ui ) {
 	// .css({
 	// 	padding: '0px 10px',
 	// 	height: items[i].duration,
-	// 	lineHeight: lh+'px'
+	// 	lineHeight: lh+'px',
 	// });
 }
 
@@ -145,15 +156,20 @@ function handleDragStop( event, ui ) {
 function scheduleDropEvent( event, ui ) {
 	var draggable = ui.draggable;
 	var i = draggable.attr('itemid');
+
 	items[i].start = $('.column.schedule').scrollTop() + ui.offset.top - 10;
+	var addMargin = 0;
+	if (draggable.hasClass('task')) {
+		addMargin = 10;
+	}
 	draggable
 	.css({
 		opacity: '1',
 		padding: '0px 10px',
-		top: items[i].start + 10,
+		top: items[i].start + addMargin,
 		height: items[i].duration,
 		lineHeight: items[i].duration +'px',
-		zIndex: items[i].start + 10
+		zIndex: items[i].start + addMargin
 	})
 	.addClass('task');
 
@@ -166,6 +182,7 @@ function scheduleOverEvent( event, ui ) {
 	var draggable = ui.draggable; 
 	var i = draggable.attr('itemid');
 	var h = draggable.height();
+	// $(ui.helper).detach().appendTo('#itemsList');
 	// $(ui.helper)
 }
 
@@ -182,6 +199,7 @@ function listDropEvent( event, ui ) {
 
 function listOverEvent( event, ui ) {
 	var draggable = ui.draggable;
+	// $(ui.helper).detach().appendTo('#itemsList');
 	// console.log( 'The square with ID "' + draggable.attr('itemid') + '" is over me!' ) 
 }
 
